@@ -10,19 +10,28 @@
   <p>Paste a link and get a video.</p>
   <input id="link" type="text" placeholder="Paste your link here" style="width:80%;padding:10px">
   <br><br>
-  <button onclick="testBackend()" style="padding:10px 20px">Generate Video</button>
-  <p id="result"></p>
+  <button onclick="generate()" style="padding:10px 20px">Generate Video</button>
+  <p id="result" style="white-space:pre-wrap;text-align:left"></p>
 
   <script>
     const BACKEND_URL = "https://linkreel-backend.onrender.com";
 
-    async function testBackend() {
+    async function generate() {
+      const link = document.getElementById("link").value.trim();
       const result = document.getElementById("result");
-      result.textContent = "Connecting... the first try can take about a minute.";
+      result.textContent = "Reading the link... the first try can take about a minute.";
       try {
-        const res = await fetch(BACKEND_URL);
-        const text = await res.text();
-        result.textContent = "Backend says: " + text;
+        const res = await fetch(BACKEND_URL + "/read", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: link })
+        });
+        const data = await res.json();
+        if (data.error) {
+          result.textContent = data.error;
+          return;
+        }
+        result.textContent = "Title: " + data.title + "\n\n" + data.text;
       } catch (e) {
         result.textContent = "Could not reach the backend.";
       }

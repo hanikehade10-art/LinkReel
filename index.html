@@ -8,8 +8,25 @@
 <body style="font-family:sans-serif;text-align:center;padding:30px">
   <h1>LinkReel</h1>
   <p>Paste a link and get a video.</p>
-  <input type="text" placeholder="Paste your link here" style="width:80%;padding:10px">
+  <input id="link" type="text" placeholder="Paste your link here" style="width:80%;padding:10px">
   <br><br>
-  <button style="padding:10px 20px">Generate Video</button>
+  <button onclick="testBackend()" style="padding:10px 20px">Generate Video</button>
+  <p id="result"></p>
+
+  <script>
+    const BACKEND_URL = "https://linkreel-backend.onrender.com";
+
+    async function testBackend() {
+      const result = document.getElementById("result");
+      result.textContent = "Connecting... the first try can take about a minute.";
+      try {
+        const res = await fetch(BACKEND_URL);
+        const text = await res.text();
+        result.textContent = "Backend says: " + text;
+      } catch (e) {
+        result.textContent = "Could not reach the backend.";
+      }
+    }
+  </script>
 </body>
 </html>

@@ -31,7 +31,7 @@
           result.textContent = data.error;
           return;
         }
-        result.textContent = "Title: " + data.title + "\n\n" + data.text;
+        result.textContent = data.script;
       } catch (e) {
         result.textContent = "Could not reach the backend.";
       }

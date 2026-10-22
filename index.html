@@ -1,98 +1,349 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LinkReel</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkReel - Turn any link into a video</title>
+<meta name="description" content="Paste a link or a whole website and LinkReel builds a short video with a voiceover.">
+<style>
+  :root {
+    --bg: #0a0e1f;
+    --card: #121936;
+    --line: #243058;
+    --text: #eef1ff;
+    --muted: #9aa6d1;
+    --a: #6c5ce7;
+    --b: #00c2ff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+  .grad {
+    background: linear-gradient(90deg, var(--a), var(--b));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .btn {
+    display: inline-block;
+    padding: 14px 26px;
+    border: 0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(90deg, var(--a), var(--b));
+    cursor: pointer;
+  }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(10,14,31,.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .logo { font-size: 22px; font-weight: 800; text-decoration: none; }
+  nav { display: none; gap: 22px; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
+  nav a:hover { color: var(--text); }
+  .right { display: flex; align-items: center; gap: 14px; }
+  .dots { display: flex; gap: 8px; }
+  .dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--line); cursor: pointer; padding: 0;
+  }
+  .dot:hover { border-color: #fff; }
+  @media (min-width: 760px) { nav { display: flex; } }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 70px 0 60px;
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--a) 35%, transparent) 0, transparent 60%);
+  }
+  .pill {
+    display: inline-block; padding: 6px 14px; border: 1px solid var(--line);
+    border-radius: 999px; font-size: 13px; color: var(--muted); margin-bottom: 18px;
+  }
+  .hero h1 { margin: 0 auto 16px; font-size: 40px; line-height: 1.15; max-width: 720px; }
+  .hero p { margin: 0 auto 28px; max-width: 560px; color: var(--muted); font-size: 18px; }
+  @media (min-width: 760px) { .hero h1 { font-size: 58px; } }
+
+  /* Sections */
+  section { padding: 56px 0; }
+  .title { text-align: center; font-size: 30px; margin: 0 0 8px; }
+  .sub { text-align: center; color: var(--muted); margin: 0 auto 34px; max-width: 520px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) {
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .feats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+  }
+  .num {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; margin-bottom: 12px;
+    background: linear-gradient(90deg, var(--a), var(--b));
+  }
+  .card h3 { margin: 0 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Tool */
+  .tool { max-width: 520px; margin: 0 auto; }
+  label.lab { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+  input[type=text], textarea {
+    width: 100%; padding: 13px; border-radius: 12px;
+    border: 1px solid var(--line); background: #0c1230; color: var(--text);
+    font-size: 16px; font-family: inherit; margin-bottom: 14px;
+  }
+  input[type=text]:focus, textarea:focus { outline: 2px solid var(--a); }
+  .check { display: flex; gap: 10px; align-items: center; font-size: 15px; margin-bottom: 16px; }
+  .check input { width: 20px; height: 20px; accent-color: var(--a); }
+  .tool .btn { width: 100%; }
+  .phone {
+    width: 270px; margin: 30px auto 0; padding: 12px; border-radius: 44px;
+    background: #05070f; border: 2px solid #39447a; position: relative;
+    box-shadow: 0 25px 60px rgba(0,0,0,.6), 0 0 40px color-mix(in srgb, var(--a) 40%, transparent);
+  }
+  .notch {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 18px; background: #05070f; border-radius: 0 0 14px 14px; z-index: 3;
+  }
+  .screen { aspect-ratio: 9 / 16; border-radius: 32px; overflow: hidden; background: #000; position: relative; }
+  .screen video { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .ph {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; padding: 24px;
+    text-align: center; color: var(--muted); font-size: 14px;
+    background: linear-gradient(160deg, #141b40, #0a0e1f);
+  }
+  .spin {
+    display: none; width: 34px; height: 34px; border-radius: 50%;
+    border: 4px solid var(--line); border-top-color: var(--b);
+    animation: sp 1s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  .box { margin-top: 22px; display: none; }
+  .box h3 { margin: 0 0 8px; font-size: 15px; color: var(--muted); }
+  #script { white-space: pre-wrap; font-size: 15px; }
+  audio { width: 100%; margin-top: 12px; display: none; }
+  .dl {
+    display: none; margin: 18px auto 0; text-align: center; padding: 13px;
+    border-radius: 12px; border: 1px solid var(--b); color: var(--b);
+    text-decoration: none; font-weight: 600;
+  }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0; text-align: center; color: var(--muted); font-size: 14px; }
+</style>
 </head>
-<body style="font-family:sans-serif;text-align:center;padding:30px">
-  <h1>LinkReel</h1>
-  <p>Paste a link and get a video.</p>
-  <input id="link" type="text" placeholder="Paste your link here" style="width:80%;padding:10px">
-  <br><br>
-  <textarea id="instructions" rows="3" placeholder="Optional: tell it what to focus on (e.g. make a promo video for my school, mention admissions)" style="width:80%;padding:10px"></textarea>
-  <br>
-  <label><input id="crawl" type="checkbox"> Use the whole website (up to 5 pages)</label>
-  <br><br>
-  <button onclick="generate()" style="padding:10px 20px">Generate Video</button>
-  <p id="result" style="white-space:pre-wrap;text-align:left"></p>
-  <audio id="player" controls style="display:none;width:90%"></audio>
-  <p id="status"></p>
-  <video id="video" controls playsinline style="display:none;width:90%;max-width:360px"></video>
-  <br>
-  <a id="download" style="display:none;padding:10px 20px;background:#eee;color:#000;text-decoration:none;border:1px solid #888">Download video</a>
+<body>
 
-  <script>
-    const BACKEND_URL = "https://linkreel-backend.onrender.com";
+<header>
+  <div class="wrap bar">
+    <a class="logo grad" href="#top">LinkReel</a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#tool">Make a video</a>
+    </nav>
+    <div class="right">
+      <div class="dots">
+        <button class="dot" aria-label="Purple theme" style="background:#6c5ce7" onclick="setTheme('#6c5ce7','#00c2ff')"></button>
+        <button class="dot" aria-label="Green theme" style="background:#10b981" onclick="setTheme('#10b981','#22d3ee')"></button>
+        <button class="dot" aria-label="Orange theme" style="background:#f97316" onclick="setTheme('#f97316','#facc15')"></button>
+        <button class="dot" aria-label="Pink theme" style="background:#ec4899" onclick="setTheme('#ec4899','#8b5cf6')"></button>
+      </div>
+    </div>
+  </div>
+</header>
 
-    async function generate() {
-      const link = document.getElementById("link").value.trim();
-      const instructions = document.getElementById("instructions").value.trim();
-      const crawl = document.getElementById("crawl").checked;
-      const result = document.getElementById("result");
-      const player = document.getElementById("player");
-      const status = document.getElementById("status");
-      const video = document.getElementById("video");
-      const dl = document.getElementById("download");
-      player.style.display = "none";
-      video.style.display = "none";
-      dl.style.display = "none";
-      status.textContent = "";
-      result.textContent = crawl
-        ? "Reading the website... this can take 2 to 3 minutes."
-        : "Working... the first try can take a minute or two.";
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <span class="pill">Free beta</span>
+      <h1>Turn any link into a <span class="grad">ready-to-post video</span></h1>
+      <p>Paste a link or a whole website. LinkReel writes the script, adds a voiceover and builds a short vertical video for you.</p>
+      <a class="btn" href="#tool">Try it free</a>
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2 class="title">How it works</h2>
+      <p class="sub">Three simple steps from link to video.</p>
+      <div class="grid steps">
+        <div class="card"><div class="num">1</div><h3>Paste a link</h3><p>Use an article, a page, or a whole website. Add instructions if you want a certain focus.</p></div>
+        <div class="card"><div class="num">2</div><h3>AI does the work</h3><p>It reads the content, writes a short script and records a natural voiceover.</p></div>
+        <div class="card"><div class="num">3</div><h3>Download your video</h3><p>Get a vertical video with pictures that change automatically.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <h2 class="title">Built for creators and businesses</h2>
+      <p class="sub">Everything you need to post faster.</p>
+      <div class="grid feats">
+        <div class="card"><h3>Whole website mode</h3><p>Reads up to 5 pages of a site and covers them in one video.</p></div>
+        <div class="card"><h3>Natural voiceover</h3><p>A clear AI voice reads the script for you.</p></div>
+        <div class="card"><h3>Auto-cut visuals</h3><p>Pictures from the site change every few seconds, with no editing.</p></div>
+        <div class="card"><h3>Made for Reels and TikTok</h3><p>Short 9:16 videos that fit phone screens.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tool">
+    <div class="wrap">
+      <h2 class="title">Make your video</h2>
+      <p class="sub">Paste a link below and tap the button.</p>
+      <div class="tool">
+        <div class="card">
+          <label class="lab">Link</label>
+          <input id="link" type="text" placeholder="Paste a link, e.g. https://yabatech.edu.ng">
+          <label class="lab">Instructions (optional)</label>
+          <textarea id="instructions" rows="3" placeholder="e.g. Make a promo video for my school, mention admissions"></textarea>
+          <label class="check"><input id="crawl" type="checkbox"> Use the whole website (up to 5 pages)</label>
+          <button id="btn" class="btn" onclick="generate()">Generate Video</button>
+        </div>
+
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <video id="video" controls playsinline></video>
+            <div class="ph" id="ph">
+              <div class="spin" id="spin"></div>
+              <div id="phText">Your video will appear here</div>
+            </div>
+          </div>
+        </div>
+
+        <a id="download" class="dl">Download video</a>
+
+        <div class="card box" id="scriptBox">
+          <h3>Script</h3>
+          <div id="script"></div>
+          <audio id="player" controls></audio>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">&copy; 2026 LinkReel. Turn links into videos.</div>
+</footer>
+
+<script>
+  const BACKEND_URL = "https://linkreel-backend.onrender.com";
+  const $ = (id) => document.getElementById(id);
+
+  function setTheme(a, b) {
+    document.documentElement.style.setProperty("--a", a);
+    document.documentElement.style.setProperty("--b", b);
+    try { localStorage.setItem("linkreel-theme", JSON.stringify([a, b])); } catch (e) {}
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem("linkreel-theme"));
+    if (saved && saved.length === 2) setTheme(saved[0], saved[1]);
+  } catch (e) {}
+
+  function setScreen(msg, busy) {
+    $("ph").style.display = "flex";
+    $("phText").textContent = msg;
+    $("spin").style.display = busy ? "block" : "none";
+  }
+
+  function finish() {
+    $("btn").disabled = false;
+  }
+
+  async function generate() {
+    const link = $("link").value.trim();
+    const instructions = $("instructions").value.trim();
+    const crawl = $("crawl").checked;
+    $("btn").disabled = true;
+    $("video").style.display = "none";
+    $("download").style.display = "none";
+    $("player").style.display = "none";
+    $("scriptBox").style.display = "none";
+    setScreen(crawl ? "Reading the website... this can take 2 to 3 minutes" : "Reading the link... about a minute", true);
+    try {
+      const res = await fetch(BACKEND_URL + "/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: link, instructions: instructions, crawl: crawl })
+      });
+      const data = await res.json();
+      if (data.error) {
+        setScreen(data.error, false);
+        finish();
+        return;
+      }
+      $("script").textContent = data.script + "\n\n(Pages read: " + data.pagesRead + ")";
+      $("scriptBox").style.display = "block";
+      if (data.audio) {
+        $("player").src = "data:audio/mpeg;base64," + data.audio;
+        $("player").style.display = "block";
+      } else {
+        $("script").textContent += "\n\n(Voice failed: " + data.audioError + ")";
+      }
+      if (data.jobId) {
+        setScreen("Building your video... a few minutes", true);
+        poll(data.jobId);
+      } else {
+        setScreen("No video was made", false);
+        finish();
+      }
+    } catch (e) {
+      setScreen("Could not reach the backend.", false);
+      finish();
+    }
+  }
+
+  async function poll(id) {
+    for (let i = 0; i < 120; i++) {
+      await new Promise((r) => setTimeout(r, 5000));
       try {
-        const res = await fetch(BACKEND_URL + "/read", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: link, instructions: instructions, crawl: crawl })
-        });
-        const data = await res.json();
-        if (data.error) {
-          result.textContent = data.error;
+        const res = await fetch(BACKEND_URL + "/job/" + id);
+        const j = await res.json();
+        if (j.status === "done") {
+          $("video").src = BACKEND_URL + "/video/" + id;
+          $("video").style.display = "block";
+          $("ph").style.display = "none";
+          $("player").style.display = "none";
+          $("download").href = BACKEND_URL + "/video/" + id + "?download=1";
+          $("download").style.display = "block";
+          finish();
           return;
         }
-        result.textContent = data.script + "\n\n(Pages read: " + data.pagesRead + ")";
-        if (data.audio) {
-          player.src = "data:audio/mpeg;base64," + data.audio;
-          player.style.display = "block";
-        } else {
-          result.textContent += "\n\n(Voice failed: " + data.audioError + ")";
+        if (j.status === "error") {
+          setScreen("Video failed: " + j.error, false);
+          finish();
+          return;
         }
-        if (data.jobId) {
-          poll(data.jobId);
-        }
-      } catch (e) {
-        result.textContent = "Could not reach the backend.";
-      }
+      } catch (e) {}
     }
-
-    async function poll(id) {
-      const status = document.getElementById("status");
-      const video = document.getElementById("video");
-      const dl = document.getElementById("download");
-      status.textContent = "Building the video... this can take a few minutes.";
-      for (let i = 0; i < 120; i++) {
-        await new Promise((r) => setTimeout(r, 5000));
-        try {
-          const res = await fetch(BACKEND_URL + "/job/" + id);
-          const j = await res.json();
-          if (j.status === "done") {
-            video.src = BACKEND_URL + "/video/" + id;
-            video.style.display = "block";
-            dl.href = BACKEND_URL + "/video/" + id + "?download=1";
-            dl.style.display = "inline-block";
-            status.textContent = "Video ready!";
-            return;
-          }
-          if (j.status === "error") {
-            status.textContent = "Video failed: " + j.error;
-            return;
-          }
-        } catch (e) {}
-      }
-      status.textContent = "The video is taking too long. Please try again.";
-    }
-  </script>
+    setScreen("The video is taking too long. Please try again.", false);
+    finish();
+  }
+</script>
 </body>
-</html>
+            </html>

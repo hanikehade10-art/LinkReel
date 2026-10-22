@@ -43,6 +43,7 @@
     background: linear-gradient(90deg, var(--a), var(--b));
     cursor: pointer;
     font-family: inherit;
+    text-align: center;
   }
   .btn:disabled { opacity: .55; cursor: not-allowed; }
   .btn.small { padding: 8px 14px; font-size: 14px; border-radius: 10px; }
@@ -68,10 +69,8 @@
     border: 2px solid var(--line); cursor: pointer; padding: 0;
   }
   .dot:hover { border-color: #fff; }
-  #userBox { display: none; align-items: center; gap: 8px; }
-  #userPic { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); }
-  #userName { display: none; font-size: 14px; }
-  @media (min-width: 760px) { nav { display: flex; } #userName { display: inline; } .dot { width: 22px; height: 22px; } .dots { gap: 8px; } }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); object-fit: cover; }
+  @media (min-width: 760px) { nav { display: flex; } .dot { width: 22px; height: 22px; } .dots { gap: 8px; } }
 
   .hero {
     text-align: center;
@@ -93,7 +92,7 @@
   @media (min-width: 760px) {
     .steps { grid-template-columns: repeat(3, 1fr); }
     .feats { grid-template-columns: repeat(2, 1fr); }
-    .plans { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; }
+    .plans { grid-template-columns: repeat(3, 1fr); }
   }
   .card {
     background: var(--card);
@@ -116,13 +115,30 @@
     position: absolute; top: -12px; right: 18px; padding: 3px 12px; border-radius: 999px;
     font-size: 12px; font-weight: 700; background: linear-gradient(90deg, var(--a), var(--b));
   }
-  .price { font-size: 38px; font-weight: 800; margin: 10px 0 2px; }
+  .price { font-size: 36px; font-weight: 800; margin: 10px 0 2px; }
   .price span { font-size: 15px; font-weight: 400; color: var(--muted); }
   .plan ul { list-style: none; padding: 0; margin: 16px 0 22px; flex: 1; }
   .plan li { padding: 6px 0 6px 26px; position: relative; color: var(--text); font-size: 15px; }
   .plan li::before { content: "\2713"; position: absolute; left: 0; color: var(--b); font-weight: 700; }
-  .plan .btn { width: 100%; text-align: center; }
+  .plan .btn { width: 100%; }
 
+  footer { border-top: 1px solid var(--line); padding: 28px 0; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* Dashboard */
+  #dashboard { background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--a) 22%, transparent) 0, transparent 50%), #070a17; min-height: 100vh; }
+  .tabs { display: flex; gap: 8px; padding: 14px 0 6px; overflow-x: auto; }
+  .tabs button {
+    padding: 10px 18px; border-radius: 999px; border: 1px solid var(--line);
+    background: transparent; color: var(--muted); font-size: 15px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; font-family: inherit;
+  }
+  .tabs button.active { background: linear-gradient(90deg, var(--a), var(--b)); color: #fff; border-color: transparent; }
+  .panel { display: none; padding: 18px 0 70px; }
+  .panel.show { display: block; }
+  .welcome h2 { margin: 0 0 4px; font-size: 26px; }
+  .welcome p { margin: 0 0 18px; color: var(--muted); }
+  .stat { display: flex; gap: 12px; align-items: center; margin-bottom: 18px; }
+  .stat .big { font-size: 22px; font-weight: 800; }
   .tool { max-width: 520px; margin: 0 auto; }
   label.lab { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
   input[type=text], textarea {
@@ -134,7 +150,6 @@
   .check { display: flex; gap: 10px; align-items: center; font-size: 15px; margin-bottom: 16px; }
   .check input { width: 20px; height: 20px; accent-color: var(--a); }
   .tool .btn { width: 100%; }
-  #authNote { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
   .phone {
     width: 270px; margin: 30px auto 0; padding: 12px; border-radius: 44px;
     background: #05070f; border: 2px solid #39447a; position: relative;
@@ -165,113 +180,119 @@
   .dl {
     display: none; margin: 18px auto 0; text-align: center; padding: 13px;
     border-radius: 12px; border: 1px solid var(--b); color: var(--b);
-    text-decoration: none; font-weight: 600;
+    text-decoration: none; font-weight: 600; max-width: 520px;
   }
-  footer { border-top: 1px solid var(--line); padding: 28px 0; text-align: center; color: var(--muted); font-size: 14px; }
+  .acc { max-width: 520px; margin: 0 auto; text-align: center; }
+  .acc .avatar { width: 80px; height: 80px; margin-bottom: 12px; }
+  .acc h2 { margin: 0 0 4px; }
+  .acc p { margin: 0 0 18px; color: var(--muted); }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap bar">
-    <a class="logo grad" href="#top">LinkReel</a>
-    <nav>
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#tool">Make a video</a>
-    </nav>
-    <div class="right">
-      <div class="dots">
-        <button class="dot" aria-label="Purple theme" style="background:#6c5ce7" onclick="setTheme('#6c5ce7','#00c2ff')"></button>
-        <button class="dot" aria-label="Green theme" style="background:#10b981" onclick="setTheme('#10b981','#22d3ee')"></button>
-        <button class="dot" aria-label="Orange theme" style="background:#f97316" onclick="setTheme('#f97316','#facc15')"></button>
-        <button class="dot" aria-label="Pink theme" style="background:#ec4899" onclick="setTheme('#ec4899','#8b5cf6')"></button>
-      </div>
-      <button id="signInBtn" class="btn small" onclick="startSignIn()">Sign in</button>
-      <div id="userBox">
-        <img id="userPic" alt="" referrerpolicy="no-referrer">
-        <span id="userName"></span>
-        <button class="btn small ghost" onclick="startSignOut()">Sign out</button>
-      </div>
-    </div>
-  </div>
-</header>
-
-<main id="top">
-  <div class="hero">
-    <div class="wrap">
-      <span class="pill">Free beta</span>
-      <h1>Turn any link into a <span class="grad">ready-to-post video</span></h1>
-      <p>Paste a link or a whole website. LinkReel writes the script, adds a voiceover and builds a short vertical video for you.</p>
-      <a class="btn" href="#tool" onclick="tryFree(event)">Try it free</a>
-    </div>
-  </div>
-
-  <section id="how">
-    <div class="wrap">
-      <h2 class="title">How it works</h2>
-      <p class="sub">Three simple steps from link to video.</p>
-      <div class="grid steps">
-        <div class="card"><div class="num">1</div><h3>Paste a link</h3><p>Use an article, a page, or a whole website. Add instructions if you want a certain focus.</p></div>
-        <div class="card"><div class="num">2</div><h3>AI does the work</h3><p>It reads the content, writes a short script and records a natural voiceover.</p></div>
-        <div class="card"><div class="num">3</div><h3>Download your video</h3><p>Get a vertical video with pictures that change automatically.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="features">
-    <div class="wrap">
-      <h2 class="title">Built for creators and businesses</h2>
-      <p class="sub">Everything you need to post faster.</p>
-      <div class="grid feats">
-        <div class="card"><h3>Whole website mode</h3><p>Reads up to 5 pages of a site and covers them in one video.</p></div>
-        <div class="card"><h3>Natural voiceover</h3><p>A clear AI voice reads the script for you.</p></div>
-        <div class="card"><h3>Auto-cut visuals</h3><p>Pictures from the site change every few seconds, with no editing.</p></div>
-        <div class="card"><h3>Made for Reels and TikTok</h3><p>Short 9:16 videos that fit phone screens.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="pricing">
-    <div class="wrap">
-      <h2 class="title">Simple pricing</h2>
-      <p class="sub">Start free. Upgrade when you need more.</p>
-      <div class="grid plans">
-        <div class="card plan">
-          <h3>Starter</h3>
-          <div class="price">&#8358;0 <span>/ month</span></div>
-          <ul>
-            <li>3 videos per month</li>
-            <li>Single link to video</li>
-            <li>AI script and voiceover</li>
-            <li>Your own instructions</li>
-          </ul>
-          <a class="btn ghost" href="#tool" onclick="tryFree(event)">Start free</a>
+<!-- ============ LANDING (signed out) ============ -->
+<div id="landing">
+  <header>
+    <div class="wrap bar">
+      <a class="logo grad" href="#top">LinkReel</a>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <div class="right">
+        <div class="dots">
+          <button class="dot" aria-label="Purple theme" style="background:#6c5ce7" onclick="setTheme('#6c5ce7','#00c2ff')"></button>
+          <button class="dot" aria-label="Green theme" style="background:#10b981" onclick="setTheme('#10b981','#22d3ee')"></button>
+          <button class="dot" aria-label="Orange theme" style="background:#f97316" onclick="setTheme('#f97316','#facc15')"></button>
+          <button class="dot" aria-label="Pink theme" style="background:#ec4899" onclick="setTheme('#ec4899','#8b5cf6')"></button>
         </div>
-        <div class="card plan pro">
-          <span class="badge">Most popular</span>
-          <h3>Pro</h3>
-          <div class="price">&#8358;3,000 <span>/ month</span></div>
-          <ul>
-            <li>50 videos per month</li>
-            <li>Whole website mode (up to 5 pages)</li>
-            <li>AI script and voiceover</li>
-            <li>Your own instructions</li>
-          </ul>
-          <button class="btn" onclick="alert('Pro payments are coming soon. Sign in and start with the free plan for now.')">Upgrade to Pro</button>
+        <button class="btn small" onclick="startSignIn()">Sign in</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="wrap">
+        <span class="pill">Free beta</span>
+        <h1>Turn any link into a <span class="grad">ready-to-post video</span></h1>
+        <p>Paste a link or a whole website. LinkReel writes the script, adds a voiceover and builds a short vertical video for you.</p>
+        <button class="btn" onclick="startSignIn()">Try it free</button>
+      </div>
+    </div>
+
+    <section id="how">
+      <div class="wrap">
+        <h2 class="title">How it works</h2>
+        <p class="sub">Three simple steps from link to video.</p>
+        <div class="grid steps">
+          <div class="card"><div class="num">1</div><h3>Paste a link</h3><p>Use an article, a page, or a whole website. Add instructions if you want a certain focus.</p></div>
+          <div class="card"><div class="num">2</div><h3>AI does the work</h3><p>It reads the content, writes a short script and records a natural voiceover.</p></div>
+          <div class="card"><div class="num">3</div><h3>Download your video</h3><p>Get a vertical video with pictures that change automatically.</p></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="tool">
-    <div class="wrap">
-      <h2 class="title">Make your video</h2>
-      <p class="sub">Paste a link below and tap the button.</p>
+    <section id="features">
+      <div class="wrap">
+        <h2 class="title">Built for creators and businesses</h2>
+        <p class="sub">Everything you need to post faster.</p>
+        <div class="grid feats">
+          <div class="card"><h3>Whole website mode</h3><p>Reads up to 5 pages of a site and covers them in one video.</p></div>
+          <div class="card"><h3>Natural voiceover</h3><p>A clear AI voice reads the script for you.</p></div>
+          <div class="card"><h3>Auto-cut visuals</h3><p>Pictures from the site change every few seconds, with no editing.</p></div>
+          <div class="card"><h3>Made for Reels and TikTok</h3><p>Short 9:16 videos that fit phone screens.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="wrap">
+        <h2 class="title">Simple pricing</h2>
+        <p class="sub">Start free. Upgrade when you need more.</p>
+        <div class="grid plans" id="landingPlans"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">&copy; 2026 LinkReel. Turn links into videos.</div>
+  </footer>
+</div>
+
+<!-- ============ DASHBOARD (signed in) ============ -->
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="wrap bar">
+      <span class="logo grad">LinkReel</span>
+      <div class="right">
+        <div class="dots">
+          <button class="dot" aria-label="Purple theme" style="background:#6c5ce7" onclick="setTheme('#6c5ce7','#00c2ff')"></button>
+          <button class="dot" aria-label="Green theme" style="background:#10b981" onclick="setTheme('#10b981','#22d3ee')"></button>
+          <button class="dot" aria-label="Orange theme" style="background:#f97316" onclick="setTheme('#f97316','#facc15')"></button>
+          <button class="dot" aria-label="Pink theme" style="background:#ec4899" onclick="setTheme('#ec4899','#8b5cf6')"></button>
+        </div>
+        <img id="dashPic" class="avatar" alt="" referrerpolicy="no-referrer">
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs">
+      <button id="tabbtn-create" class="active" onclick="showTab('create')">Create video</button>
+      <button id="tabbtn-plan" onclick="showTab('plan')">My plan</button>
+      <button id="tabbtn-account" onclick="showTab('account')">Account</button>
+    </div>
+
+    <!-- Create -->
+    <div id="tab-create" class="panel show">
+      <div class="welcome">
+        <h2>Hi <span id="dashName"></span> 👋</h2>
+        <p>Paste a link below and we will turn it into a video.</p>
+      </div>
       <div class="tool">
         <div class="card">
-          <p id="authNote">Sign in with Google to make videos.</p>
           <label class="lab">Link</label>
           <input id="link" type="text" placeholder="Paste a link, e.g. https://yabatech.edu.ng">
           <label class="lab">Instructions (optional)</label>
@@ -300,16 +321,74 @@
         </div>
       </div>
     </div>
-  </section>
-</main>
 
-<footer>
-  <div class="wrap">&copy; 2026 LinkReel. Turn links into videos.</div>
-</footer>
+    <!-- Plan -->
+    <div id="tab-plan" class="panel">
+      <div class="card stat">
+        <div>
+          <div style="color:var(--muted);font-size:13px">Current plan</div>
+          <div class="big grad">Starter</div>
+          <div style="color:var(--muted);font-size:14px">3 videos per month</div>
+        </div>
+      </div>
+      <div class="grid plans" id="dashPlans"></div>
+    </div>
+
+    <!-- Account -->
+    <div id="tab-account" class="panel">
+      <div class="card acc">
+        <img id="accPic" class="avatar" alt="" referrerpolicy="no-referrer">
+        <h2 id="accName"></h2>
+        <p id="accEmail"></p>
+        <button class="btn ghost" onclick="startSignOut()">Sign out</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   const BACKEND_URL = "https://linkreel-backend.onrender.com";
   const $ = (id) => document.getElementById(id);
+
+  const PLANS = [
+    { name: "Starter", price: "\u20A60", popular: false,
+      items: ["3 videos per month", "Single link to video", "AI script and voiceover", "Your own instructions"] },
+    { name: "Pro", price: "\u20A63,000", popular: true,
+      items: ["50 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Your own instructions"] },
+    { name: "Pro Max", price: "\u20A65,000", popular: false,
+      items: ["150 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Early access to new features"] }
+  ];
+
+  function renderPlans(targetId, mode) {
+    const box = $(targetId);
+    box.innerHTML = "";
+    PLANS.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.className = "card plan" + (p.popular ? " pro" : "");
+      let html = "";
+      if (p.popular) html += '<span class="badge">Most popular</span>';
+      html += "<h3>" + p.name + "</h3>";
+      html += '<div class="price">' + p.price + ' <span>/ month</span></div>';
+      html += "<ul>" + p.items.map((t) => "<li>" + t + "</li>").join("") + "</ul>";
+      card.innerHTML = html;
+      const btn = document.createElement("button");
+      btn.className = i === 0 ? "btn ghost" : "btn";
+      if (mode === "landing") {
+        btn.textContent = i === 0 ? "Start free" : "Get " + p.name;
+        btn.onclick = startSignIn;
+      } else if (i === 0) {
+        btn.textContent = "Current plan";
+        btn.disabled = true;
+      } else {
+        btn.textContent = "Upgrade to " + p.name;
+        btn.onclick = () => alert("Payments for " + p.name + " are coming soon.");
+      }
+      card.appendChild(btn);
+      box.appendChild(card);
+    });
+  }
+  renderPlans("landingPlans", "landing");
+  renderPlans("dashPlans", "dash");
 
   function setTheme(a, b) {
     document.documentElement.style.setProperty("--a", a);
@@ -329,17 +408,11 @@
     if (window.signOutUser) window.signOutUser();
   }
 
-  async function tryFree(e) {
-    e.preventDefault();
-    if (!window.currentUser) {
-      if (window.signInGoogle) {
-        await window.signInGoogle();
-      } else {
-        alert("Sign-in is not ready. Check the Firebase config in index.html.");
-        return;
-      }
-    }
-    $("tool").scrollIntoView({ behavior: "smooth" });
+  function showTab(name) {
+    ["create", "plan", "account"].forEach((t) => {
+      $("tab-" + t).classList.toggle("show", t === name);
+      $("tabbtn-" + t).classList.toggle("active", t === name);
+    });
   }
 
   function setScreen(msg, busy) {
@@ -407,7 +480,7 @@
         const res = await fetch(BACKEND_URL + "/job/" + id);
         const j = await res.json();
         if (j.status === "done") {
-          $("video").src = BACKEND_URL + "/video/" + id;
+          $("video").src = BACKEND_URL + "/video/" + id
           $("video").style.display = "block";
           $("ph").style.display = "none";
           $("player").style.display = "none";
@@ -431,7 +504,8 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-const firebaseConfig = {
+
+  const firebaseConfig = {
     apiKey: "AIzaSyA7z0n1jfVJjAbbpcKNt1VIobp_hkooIpU",
     authDomain: "linkreel-e08c2.firebaseapp.com",
     projectId: "linkreel-e08c2",
@@ -446,7 +520,7 @@ const firebaseConfig = {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (e) {
-      if (true) {
+      if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
         alert("Sign-in failed: " + e.code);
       }
     }
@@ -457,17 +531,20 @@ const firebaseConfig = {
     window.currentUser = user;
     const g = (id) => document.getElementById(id);
     if (user) {
-      g("signInBtn").style.display = "none";
-      g("userBox").style.display = "flex";
-      g("userName").textContent = (user.displayName || "").split(" ")[0];
-      g("userPic").src = user.photoURL || "";
-      g("authNote").textContent = "Signed in as " + user.email;
+      const first = (user.displayName || "there").split(" ")[0];
+      g("landing").style.display = "none";
+      g("dashboard").style.display = "block";
+      g("dashName").textContent = first;
+      g("dashPic").src = user.photoURL || "";
+      g("accPic").src = user.photoURL || "";
+      g("accName").textContent = user.displayName || "";
+      g("accEmail").textContent = user.email || "";
+      window.scrollTo(0, 0);
     } else {
-      g("signInBtn").style.display = "inline-block";
-      g("userBox").style.display = "none";
-      g("authNote").textContent = "Sign in with Google to make videos.";
+      g("dashboard").style.display = "none";
+      g("landing").style.display = "block";
     }
   });
 </script>
 </body>
-  </html>
+</html>

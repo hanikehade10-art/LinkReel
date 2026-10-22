@@ -10,6 +10,10 @@
   <p>Paste a link and get a video.</p>
   <input id="link" type="text" placeholder="Paste your link here" style="width:80%;padding:10px">
   <br><br>
+  <textarea id="instructions" rows="3" placeholder="Optional: tell it what to focus on (e.g. make a promo video for my school, mention admissions)" style="width:80%;padding:10px"></textarea>
+  <br>
+  <label><input id="crawl" type="checkbox"> Use the whole website (up to 5 pages)</label>
+  <br><br>
   <button onclick="generate()" style="padding:10px 20px">Generate Video</button>
   <p id="result" style="white-space:pre-wrap;text-align:left"></p>
   <audio id="player" controls style="display:none;width:90%"></audio>
@@ -23,6 +27,8 @@
 
     async function generate() {
       const link = document.getElementById("link").value.trim();
+      const instructions = document.getElementById("instructions").value.trim();
+      const crawl = document.getElementById("crawl").checked;
       const result = document.getElementById("result");
       const player = document.getElementById("player");
       const status = document.getElementById("status");
@@ -32,19 +38,21 @@
       video.style.display = "none";
       dl.style.display = "none";
       status.textContent = "";
-      result.textContent = "Working... the first try can take a minute or two.";
+      result.textContent = crawl
+        ? "Reading the website... this can take 2 to 3 minutes."
+        : "Working... the first try can take a minute or two.";
       try {
         const res = await fetch(BACKEND_URL + "/read", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: link })
+          body: JSON.stringify({ url: link, instructions: instructions, crawl: crawl })
         });
         const data = await res.json();
         if (data.error) {
           result.textContent = data.error;
           return;
         }
-        result.textContent = data.script;
+        result.textContent = data.script + "\n\n(Pages read: " + data.pagesRead + ")";
         if (data.audio) {
           player.src = "data:audio/mpeg;base64," + data.audio;
           player.style.display = "block";
@@ -64,7 +72,7 @@
       const video = document.getElementById("video");
       const dl = document.getElementById("download");
       status.textContent = "Building the video... this can take a few minutes.";
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i < 120; i++) {
         await new Promise((r) => setTimeout(r, 5000));
         try {
           const res = await fetch(BACKEND_URL + "/job/" + id);

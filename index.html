@@ -13,6 +13,10 @@
   <button onclick="generate()" style="padding:10px 20px">Generate Video</button>
   <p id="result" style="white-space:pre-wrap;text-align:left"></p>
   <audio id="player" controls style="display:none;width:90%"></audio>
+  <p id="status"></p>
+  <video id="video" controls playsinline style="display:none;width:90%;max-width:360px"></video>
+  <br>
+  <a id="download" style="display:none;padding:10px 20px;background:#eee;color:#000;text-decoration:none;border:1px solid #888">Download video</a>
 
   <script>
     const BACKEND_URL = "https://linkreel-backend.onrender.com";
@@ -21,7 +25,13 @@
       const link = document.getElementById("link").value.trim();
       const result = document.getElementById("result");
       const player = document.getElementById("player");
+      const status = document.getElementById("status");
+      const video = document.getElementById("video");
+      const dl = document.getElementById("download");
       player.style.display = "none";
+      video.style.display = "none";
+      dl.style.display = "none";
+      status.textContent = "";
       result.textContent = "Working... the first try can take a minute or two.";
       try {
         const res = await fetch(BACKEND_URL + "/read", {
@@ -41,9 +51,39 @@
         } else {
           result.textContent += "\n\n(Voice failed: " + data.audioError + ")";
         }
+        if (data.jobId) {
+          poll(data.jobId);
+        }
       } catch (e) {
         result.textContent = "Could not reach the backend.";
       }
+    }
+
+    async function poll(id) {
+      const status = document.getElementById("status");
+      const video = document.getElementById("video");
+      const dl = document.getElementById("download");
+      status.textContent = "Building the video... this can take a few minutes.";
+      for (let i = 0; i < 60; i++) {
+        await new Promise((r) => setTimeout(r, 5000));
+        try {
+          const res = await fetch(BACKEND_URL + "/job/" + id);
+          const j = await res.json();
+          if (j.status === "done") {
+            video.src = BACKEND_URL + "/video/" + id;
+            video.style.display = "block";
+            dl.href = BACKEND_URL + "/video/" + id + "?download=1";
+            dl.style.display = "inline-block";
+            status.textContent = "Video ready!";
+            return;
+          }
+          if (j.status === "error") {
+            status.textContent = "Video failed: " + j.error;
+            return;
+          }
+        } catch (e) {}
+      }
+      status.textContent = "The video is taking too long. Please try again.";
     }
   </script>
 </body>

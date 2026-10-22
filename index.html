@@ -124,7 +124,6 @@
 
   footer { border-top: 1px solid var(--line); padding: 28px 0; text-align: center; color: var(--muted); font-size: 14px; }
 
-  /* Dashboard */
   #dashboard { background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--a) 22%, transparent) 0, transparent 50%), #070a17; min-height: 100vh; }
   .tabs { display: flex; gap: 8px; padding: 14px 0 6px; overflow-x: auto; }
   .tabs button {
@@ -190,7 +189,17 @@
 </head>
 <body>
 
-<!-- ============ LANDING (signed out) ============ -->
+<!-- ===== STEP: PASTE YOUR apiKEY HERE (between the quotation marks on the apiKey line) ===== -->
+<script>
+  window.FIREBASE_CONFIG = {
+    apiKey: "AIzaSyA7z0n1jfVJjAbbpcKNt1VIobp_hkooIpU",
+    authDomain: "linkreel-e08c2.firebaseapp.com",
+    projectId: "linkreel-e08c2",
+    appId: "1:476973848039:web:8135b7381727f423531942"
+  };
+</script>
+<!-- ===== END OF FIREBASE CONFIG ===== -->
+
 <div id="landing">
   <header>
     <div class="wrap bar">
@@ -261,7 +270,6 @@
   </footer>
 </div>
 
-<!-- ============ DASHBOARD (signed in) ============ -->
 <div id="dashboard" style="display:none">
   <header>
     <div class="wrap bar">
@@ -285,7 +293,6 @@
       <button id="tabbtn-account" onclick="showTab('account')">Account</button>
     </div>
 
-    <!-- Create -->
     <div id="tab-create" class="panel show">
       <div class="welcome">
         <h2>Hi <span id="dashName"></span> 👋</h2>
@@ -322,7 +329,6 @@
       </div>
     </div>
 
-    <!-- Plan -->
     <div id="tab-plan" class="panel">
       <div class="card stat">
         <div>
@@ -334,7 +340,6 @@
       <div class="grid plans" id="dashPlans"></div>
     </div>
 
-    <!-- Account -->
     <div id="tab-account" class="panel">
       <div class="card acc">
         <img id="accPic" class="avatar" alt="" referrerpolicy="no-referrer">
@@ -354,9 +359,9 @@
     { name: "Starter", price: "\u20A60", popular: false,
       items: ["3 videos per month", "Single link to video", "AI script and voiceover", "Your own instructions"] },
     { name: "Pro", price: "\u20A63,000", popular: true,
-      items: ["50 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Your own instructions"] },
+      items: ["20 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Your own instructions"] },
     { name: "Pro Max", price: "\u20A65,000", popular: false,
-      items: ["150 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Early access to new features"] }
+      items: ["50 videos per month", "Whole website mode (up to 5 pages)", "AI script and voiceover", "Early access to new features"] }
   ];
 
   function renderPlans(targetId, mode) {
@@ -401,8 +406,12 @@
   } catch (e) {}
 
   function startSignIn() {
+    if (window.FIREBASE_CONFIG.apiKey.indexOf("PASTE") === 0) {
+      alert("Your Firebase apiKey is missing. Open index.html, go to the top, and paste your apiKey on the apiKey line.");
+      return;
+    }
     if (window.signInGoogle) window.signInGoogle();
-    else alert("Sign-in is not ready. Check the Firebase config in index.html.");
+    else alert("Sign-in is still loading. Please try again in a moment.");
   }
   function startSignOut() {
     if (window.signOutUser) window.signOutUser();
@@ -480,7 +489,7 @@
         const res = await fetch(BACKEND_URL + "/job/" + id);
         const j = await res.json();
         if (j.status === "done") {
-          $("video").src = BACKEND_URL + "/video/" + id
+          $("video").src = BACKEND_URL + "/video/" + id;
           $("video").style.display = "block";
           $("ph").style.display = "none";
           $("player").style.display = "none";
@@ -505,14 +514,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA7z0n1jfVJjAbbpcKNt1VIobp_hkooIpU",
-    authDomain: "linkreel-e08c2.firebaseapp.com",
-    projectId: "linkreel-e08c2",
-    appId: "1:476973848039:web:8135b7381727f423531942"
-  };
-
-  const app = initializeApp(firebaseConfig);
+  const app = initializeApp(window.FIREBASE_CONFIG);
   const auth = getAuth(app);
   window.currentUser = null;
 

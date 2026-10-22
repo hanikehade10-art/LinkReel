@@ -42,33 +42,37 @@
     text-decoration: none;
     background: linear-gradient(90deg, var(--a), var(--b));
     cursor: pointer;
+    font-family: inherit;
   }
   .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn.small { padding: 8px 14px; font-size: 14px; border-radius: 10px; }
+  .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--text); }
   .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
 
-  /* Header */
   header {
     position: sticky; top: 0; z-index: 20;
-    background: rgba(10,14,31,.85);
+    background: rgba(10,14,31,.88);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
-  .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; gap: 10px; }
   .logo { font-size: 22px; font-weight: 800; text-decoration: none; }
   nav { display: none; gap: 22px; }
   nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
   nav a:hover { color: var(--text); }
-  .right { display: flex; align-items: center; gap: 14px; }
-  .dots { display: flex; gap: 8px; }
+  .right { display: flex; align-items: center; gap: 10px; }
+  .dots { display: flex; gap: 6px; }
   .dot {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 18px; height: 18px; border-radius: 50%;
     border: 2px solid var(--line); cursor: pointer; padding: 0;
   }
   .dot:hover { border-color: #fff; }
-  @media (min-width: 760px) { nav { display: flex; } }
+  #userBox { display: none; align-items: center; gap: 8px; }
+  #userPic { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); }
+  #userName { display: none; font-size: 14px; }
+  @media (min-width: 760px) { nav { display: flex; } #userName { display: inline; } .dot { width: 22px; height: 22px; } .dots { gap: 8px; } }
 
-  /* Hero */
   .hero {
     text-align: center;
     padding: 70px 0 60px;
@@ -82,7 +86,6 @@
   .hero p { margin: 0 auto 28px; max-width: 560px; color: var(--muted); font-size: 18px; }
   @media (min-width: 760px) { .hero h1 { font-size: 58px; } }
 
-  /* Sections */
   section { padding: 56px 0; }
   .title { text-align: center; font-size: 30px; margin: 0 0 8px; }
   .sub { text-align: center; color: var(--muted); margin: 0 auto 34px; max-width: 520px; }
@@ -90,6 +93,7 @@
   @media (min-width: 760px) {
     .steps { grid-template-columns: repeat(3, 1fr); }
     .feats { grid-template-columns: repeat(2, 1fr); }
+    .plans { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; }
   }
   .card {
     background: var(--card);
@@ -106,7 +110,19 @@
   .card h3 { margin: 0 0 6px; font-size: 18px; }
   .card p { margin: 0; color: var(--muted); font-size: 15px; }
 
-  /* Tool */
+  .plan { display: flex; flex-direction: column; }
+  .plan.pro { border: 2px solid var(--a); position: relative; }
+  .badge {
+    position: absolute; top: -12px; right: 18px; padding: 3px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; background: linear-gradient(90deg, var(--a), var(--b));
+  }
+  .price { font-size: 38px; font-weight: 800; margin: 10px 0 2px; }
+  .price span { font-size: 15px; font-weight: 400; color: var(--muted); }
+  .plan ul { list-style: none; padding: 0; margin: 16px 0 22px; flex: 1; }
+  .plan li { padding: 6px 0 6px 26px; position: relative; color: var(--text); font-size: 15px; }
+  .plan li::before { content: "\2713"; position: absolute; left: 0; color: var(--b); font-weight: 700; }
+  .plan .btn { width: 100%; text-align: center; }
+
   .tool { max-width: 520px; margin: 0 auto; }
   label.lab { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
   input[type=text], textarea {
@@ -118,6 +134,7 @@
   .check { display: flex; gap: 10px; align-items: center; font-size: 15px; margin-bottom: 16px; }
   .check input { width: 20px; height: 20px; accent-color: var(--a); }
   .tool .btn { width: 100%; }
+  #authNote { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
   .phone {
     width: 270px; margin: 30px auto 0; padding: 12px; border-radius: 44px;
     background: #05070f; border: 2px solid #39447a; position: relative;
@@ -150,7 +167,6 @@
     border-radius: 12px; border: 1px solid var(--b); color: var(--b);
     text-decoration: none; font-weight: 600;
   }
-
   footer { border-top: 1px solid var(--line); padding: 28px 0; text-align: center; color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -162,6 +178,7 @@
     <nav>
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
       <a href="#tool">Make a video</a>
     </nav>
     <div class="right">
@@ -170,6 +187,12 @@
         <button class="dot" aria-label="Green theme" style="background:#10b981" onclick="setTheme('#10b981','#22d3ee')"></button>
         <button class="dot" aria-label="Orange theme" style="background:#f97316" onclick="setTheme('#f97316','#facc15')"></button>
         <button class="dot" aria-label="Pink theme" style="background:#ec4899" onclick="setTheme('#ec4899','#8b5cf6')"></button>
+      </div>
+      <button id="signInBtn" class="btn small" onclick="startSignIn()">Sign in</button>
+      <div id="userBox">
+        <img id="userPic" alt="" referrerpolicy="no-referrer">
+        <span id="userName"></span>
+        <button class="btn small ghost" onclick="startSignOut()">Sign out</button>
       </div>
     </div>
   </div>
@@ -210,12 +233,45 @@
     </div>
   </section>
 
+  <section id="pricing">
+    <div class="wrap">
+      <h2 class="title">Simple pricing</h2>
+      <p class="sub">Start free. Upgrade when you need more.</p>
+      <div class="grid plans">
+        <div class="card plan">
+          <h3>Starter</h3>
+          <div class="price">&#8358;0 <span>/ month</span></div>
+          <ul>
+            <li>3 videos per month</li>
+            <li>Single link to video</li>
+            <li>AI script and voiceover</li>
+            <li>Your own instructions</li>
+          </ul>
+          <a class="btn ghost" href="#tool" onclick="tryFree(event)">Start free</a>
+        </div>
+        <div class="card plan pro">
+          <span class="badge">Most popular</span>
+          <h3>Pro</h3>
+          <div class="price">&#8358;3,000 <span>/ month</span></div>
+          <ul>
+            <li>50 videos per month</li>
+            <li>Whole website mode (up to 5 pages)</li>
+            <li>AI script and voiceover</li>
+            <li>Your own instructions</li>
+          </ul>
+          <button class="btn" onclick="alert('Pro payments are coming soon. Sign in and start with the free plan for now.')">Upgrade to Pro</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="tool">
     <div class="wrap">
       <h2 class="title">Make your video</h2>
       <p class="sub">Paste a link below and tap the button.</p>
       <div class="tool">
         <div class="card">
+          <p id="authNote">Sign in with Google to make videos.</p>
           <label class="lab">Link</label>
           <input id="link" type="text" placeholder="Paste a link, e.g. https://yabatech.edu.ng">
           <label class="lab">Instructions (optional)</label>
@@ -252,7 +308,7 @@
 </footer>
 
 <script>
-  const BACKEND_URL = "https://linkreel-backend.onrender.com";
+  const BACKEND_URL = "PASTE_YOUR_RENDER_LINK_HERE";
   const $ = (id) => document.getElementById(id);
 
   function setTheme(a, b) {
@@ -265,6 +321,27 @@
     if (saved && saved.length === 2) setTheme(saved[0], saved[1]);
   } catch (e) {}
 
+  function startSignIn() {
+    if (window.signInGoogle) window.signInGoogle();
+    else alert("Sign-in is not ready. Check the Firebase config in index.html.");
+  }
+  function startSignOut() {
+    if (window.signOutUser) window.signOutUser();
+  }
+
+  async function tryFree(e) {
+    e.preventDefault();
+    if (!window.currentUser) {
+      if (window.signInGoogle) {
+        await window.signInGoogle();
+      } else {
+        alert("Sign-in is not ready. Check the Firebase config in index.html.");
+        return;
+      }
+    }
+    $("tool").scrollIntoView({ behavior: "smooth" });
+  }
+
   function setScreen(msg, busy) {
     $("ph").style.display = "flex";
     $("phText").textContent = msg;
@@ -276,6 +353,11 @@
   }
 
   async function generate() {
+    if (!window.currentUser) {
+      setScreen("Please sign in with Google first.", false);
+      startSignIn();
+      return;
+    }
     const link = $("link").value.trim();
     const instructions = $("instructions").value.trim();
     const crawl = $("crawl").checked;
@@ -345,5 +427,48 @@
     finish();
   }
 </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "PASTE_API_KEY",
+    authDomain: "linkreel-b63d7.firebaseapp.com",
+    projectId: "linkreel-b63d7",
+    appId: "PASTE_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  window.currentUser = null;
+
+  window.signInGoogle = async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (e) {
+      if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+        alert("Sign-in failed: " + e.code);
+      }
+    }
+  };
+  window.signOutUser = () => signOut(auth);
+
+  onAuthStateChanged(auth, (user) => {
+    window.currentUser = user;
+    const g = (id) => document.getElementById(id);
+    if (user) {
+      g("signInBtn").style.display = "none";
+      g("userBox").style.display = "flex";
+      g("userName").textContent = (user.displayName || "").split(" ")[0];
+      g("userPic").src = user.photoURL || "";
+      g("authNote").textContent = "Signed in as " + user.email;
+    } else {
+      g("signInBtn").style.display = "inline-block";
+      g("userBox").style.display = "none";
+      g("authNote").textContent = "Sign in with Google to make videos.";
+    }
+  });
+</script>
 </body>
-            </html>
+  </html>

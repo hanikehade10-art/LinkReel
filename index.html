@@ -12,6 +12,7 @@
   <br><br>
   <button onclick="generate()" style="padding:10px 20px">Generate Video</button>
   <p id="result" style="white-space:pre-wrap;text-align:left"></p>
+  <audio id="player" controls style="display:none;width:90%"></audio>
 
   <script>
     const BACKEND_URL = "https://linkreel-backend.onrender.com";
@@ -19,7 +20,9 @@
     async function generate() {
       const link = document.getElementById("link").value.trim();
       const result = document.getElementById("result");
-      result.textContent = "Reading the link... the first try can take about a minute.";
+      const player = document.getElementById("player");
+      player.style.display = "none";
+      result.textContent = "Working... the first try can take a minute or two.";
       try {
         const res = await fetch(BACKEND_URL + "/read", {
           method: "POST",
@@ -32,6 +35,12 @@
           return;
         }
         result.textContent = data.script;
+        if (data.audio) {
+          player.src = "data:audio/mpeg;base64," + data.audio;
+          player.style.display = "block";
+        } else {
+          result.textContent += "\n\n(Voice failed: " + data.audioError + ")";
+        }
       } catch (e) {
         result.textContent = "Could not reach the backend.";
       }

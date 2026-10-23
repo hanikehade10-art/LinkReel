@@ -307,6 +307,14 @@
           <label class="lab">Instructions (optional)</label>
           <textarea id="instructions" rows="3" placeholder="e.g. Make a promo video for my school, mention admissions"></textarea>
           <label class="check"><input id="crawl" type="checkbox"> Use the whole website (up to 5 pages)</label>
+<label class="check"><input id="needLogin" type="checkbox" onchange="document.getElementById('loginBox').style.display = this.checked ? 'block' : 'none'"> This link needs a login</label>
+<div id="loginBox" style="display:none">
+  <p style="font-size:13px;color:var(--muted);margin:0 0 10px">Use a test account only, never your real password. It is used once for this video and is not saved.</p>
+  <label class="lab">Test account email or username</label>
+  <input id="loginEmail" type="text" autocomplete="off" placeholder="test@example.com">
+  <label class="lab">Test account password</label>
+  <input id="loginPass" type="password" autocomplete="new-password" placeholder="Password" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:#0c1230;color:var(--text);font-size:16px;font-family:inherit;margin-bottom:14px">
+</div>
           <button id="btn" class="btn" onclick="generate()">Generate Video</button>
         </div>
 
@@ -455,7 +463,12 @@
       const res = await fetch(BACKEND_URL + "/read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: link, instructions: instructions, crawl: crawl })
+        body: JSON.stringify({
+          url: link,
+          instructions: instructions,
+          crawl: crawl,
+          login: $("needLogin").checked ? { email: $("loginEmail").value.trim(), password: $("loginPass").value } : null
+        })
       });
       const data = await res.json();
       if (data.error) {
